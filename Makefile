@@ -22,10 +22,10 @@ tools/build: tools/build.c
 tools/version: tools/version.c
 	$(CC) -o $@ $<
 
-%.o: %.S
+%.o: %.S version.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%.o: %.c
+%.o: %.c version.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 kernel.bin: $(OBJ) linker.ld version.h
