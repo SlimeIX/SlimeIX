@@ -1,8 +1,8 @@
 .code16
-.global _boot
-.org 0x7C00
+.global _start
+.org 0
 
-_boot:
+_start:
     cli
     xor %ax,%ax
     mov %ax,%ds
