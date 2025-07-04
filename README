@@ -17,7 +17,7 @@ SlimeIX kernel quickstart
    $ dd if=boot/boot0.bin of=slimeix.img conv=notrunc
    $ dd if=kernel.raw  of=slimeix.img bs=512 seek=1 conv=notrunc
 
-   boot0 expects KERNEL_SECTORS=200 (≈100KiB). adjust in boot0.S if kernel grows.
+   boot0 expects KERNEL_SECTORS=16 (boot0.S).
 
 5. run
    $ qemu-system-i386 -fda slimeix.img -m 32 -serial stdio
@@ -25,6 +25,6 @@ SlimeIX kernel quickstart
 expected: CPU halts inside kmain (hlt). add VGA writes in kmain to see text.
 
 notes
- – boot0 clears nothing; random_fill.S planned.
+ – boot0 очищает память random_fill, как OpenBSD.
  – linker.ld sets RX and RW segments, no RWX.
  – license 0BSD.
