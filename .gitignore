@@ -1,0 +1,15 @@
+*.o
+*.a
+*.out
+*.bin
+*.elf
+*.iso
+*.img
+*.map
+*.lst
+*.d
+build/
+dist/
+*.log
+tags
+TAGS 
