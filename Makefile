@@ -7,7 +7,7 @@ ARCH=-m32
 CFLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra $(INCLUDE) $(ARCH)
 LDFLAGS=-T linker.ld -nostdlib -ffreestanding -O2 $(ARCH)
 
-OBJ=boot/start.o boot/random.o kernel/main.o kernel/syscall.o kernel/console.o mm/init.o lib/string.o
+OBJ=boot/start.o boot/random.o kernel/main.o kernel/syscall.o kernel/console.o kernel/gtty.o mm/init.o lib/string.o
 
 all: kernel.bin boot/boot0.bin slimeix.img
 
