@@ -33,7 +33,6 @@ fail:
 
 drive_num: .byte 0
 
-# MBR partition table (4 entries, 16 bytes each)
 .org 446
 part1:
     .byte 0x80          # bootable
@@ -45,19 +44,19 @@ part1:
 
 # remaining partitions empty
 .org 446 + 16
-.long 0, 0, 0, 0
+.long 0, 0, 0, 0        
 .org 446 + 32  
-.long 0, 0, 0, 0
+.long 0, 0, 0, 0        
 .org 446 + 48
-.long 0, 0, 0, 0
+.long 0, 0, 0, 0        
 
 # Disk Address Packet (16 bytes)
 .align 16
 dap:
     .byte 0x10, 0x00
     .word BOOT1_SECTORS
-    .word 0x0000            # offset 0x7E00 & 0xF
-    .word 0x07E0            # segment 0x7E0
+    .word 0x0000            
+    .word 0x07E0            
     .long 1, 0
 
 .org 510
