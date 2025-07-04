@@ -17,4 +17,5 @@ hang:
     hlt
     jmp hang
 
-msg db 'Boot1 ready',0 
+msg: .ascii "Boot1 ready"
+     .byte 0 
