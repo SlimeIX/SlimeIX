@@ -21,12 +21,29 @@ _start:
     mov [drive_num], dl
     sti
 
-    in al, 0x92
-    or al, 0x02
-    out 0x92, al
+    # check if LBA supported
+    mov ah, 0x41
+    mov bx, 0x55AA
+    int 0x13
+    jc legacy_read
 
+    # LBA read
     mov si, dap
     mov ah, 0x42
+    int 0x13
+    jc fail
+
+    jmp START_ADDR
+
+legacy_read:
+    # CHS read fallback
+    mov ah, 0x02
+    mov al, BOOT1_SECTORS
+    mov ch, 0
+    mov cl, 2
+    mov dh, 0
+    mov dl, [drive_num]
+    mov bx, START_ADDR
     int 0x13
     jc fail
 
