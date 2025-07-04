@@ -5,6 +5,8 @@ INCLUDE=-Iinclude
 ARCH=-m32
 
 CFLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra $(INCLUDE) $(ARCH)
+CFLAGS += -include version.h
+
 LDFLAGS=-T linker.ld -nostdlib -ffreestanding -O2 $(ARCH)
 
 OBJ=boot/start.o boot/random.o kernel/main.o kernel/syscall.o kernel/console.o kernel/gtty.o kernel/version.o mm/init.o lib/string.o
