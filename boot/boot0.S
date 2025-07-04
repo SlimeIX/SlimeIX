@@ -33,6 +33,14 @@ fail:
 
 drive_num: .byte 0
 
+.align 16
+dap:
+    .byte 0x10, 0x00
+    .word BOOT1_SECTORS
+    .word 0x0000            
+    .word 0x07E0            
+    .long 1, 0
+
 # MBR partition table (4 entries, 16 bytes each)
 .org 446
 part1:
@@ -45,15 +53,6 @@ part1:
 
 # remaining partitions empty
 .fill 48, 1, 0          # fill remaining 3 partitions with zeros
-
-# Disk Address Packet (16 bytes)
-.align 16
-dap:
-    .byte 0x10, 0x00
-    .word BOOT1_SECTORS
-    .word 0x0000            
-    .word 0x07E0            
-    .long 1, 0
 
 .org 510
 .word 0xAA55
