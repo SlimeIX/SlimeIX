@@ -1,7 +1,7 @@
 #ifndef SLIMEIX_DEFS_H
 #define SLIMEIX_DEFS_H
 
-#define NULL ((void*)0)
+#include <stdint.h>
 
 void vga_write(const char*);
 void console_putc(char);
