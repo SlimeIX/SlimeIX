@@ -30,7 +30,7 @@ fail:
     hlt
     jmp fail
 
-align 16
+.align 16
 dap:
     .byte 0x10, 0x00
     .word BOOT1_SECTORS
