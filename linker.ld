@@ -12,7 +12,6 @@ SECTIONS
   . = 1M;
 
   .text ALIGN(4K) : {
-    *(.multiboot)
     *(.text*)
   } :text
 
