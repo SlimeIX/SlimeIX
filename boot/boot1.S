@@ -4,7 +4,7 @@
 .global boot1_entry
 
 .equ KERNEL_LBA, 17
-.equ KERNEL_SECT, 400
+.equ KERNEL_SECT, 16
 
 boot1_entry:
     cli
