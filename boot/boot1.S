@@ -5,12 +5,21 @@
 
 .equ KERNEL_LBA, 17
 .equ KERNEL_SECT, 16
+.equ drive_num, 0x7C00 + 510
 
 boot1_entry:
+    # debug: print 'B'
+    mov ah, 0x0E
+    mov al, 'B'
+    int 0x10
+
     cli
     xor ax, ax
     mov ds, ax
     mov es, ax
+
+    # restore drive number from boot0
+    mov dl, [0x7C00 + drive_num]
 
     # enable A20
     in al, 0x92

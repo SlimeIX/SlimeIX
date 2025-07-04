@@ -13,6 +13,7 @@ _start:
     mov es, ax
     mov ss, ax
     mov sp, 0x7C00
+    mov [drive_num], dl
     sti
 
     in al, 0x92
@@ -30,6 +31,9 @@ fail:
     hlt
     jmp fail
 
+drive_num: .byte 0
+
+# Disk Address Packet (16 bytes)
 .align 16
 dap:
     .byte 0x10, 0x00
