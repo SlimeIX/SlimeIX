@@ -33,6 +33,7 @@ fail:
 
 drive_num: .byte 0
 
+# MBR partition table (4 entries, 16 bytes each)
 .org 446
 part1:
     .byte 0x80          # bootable
@@ -43,12 +44,7 @@ part1:
     .long 0x0001F3FF    # LBA count: 128000 sectors (~64MB)
 
 # remaining partitions empty
-.org 446 + 16
-.long 0, 0, 0, 0        
-.org 446 + 32  
-.long 0, 0, 0, 0        
-.org 446 + 48
-.long 0, 0, 0, 0        
+.fill 48, 1, 0          # fill remaining 3 partitions with zeros
 
 # Disk Address Packet (16 bytes)
 .align 16
