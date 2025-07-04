@@ -7,6 +7,11 @@
 .equ BOOT1_SECTORS, 16
 
 _start:
+    # debug: print 'M'
+    mov ah, 0x0E
+    mov al, 'M'
+    int 0x10
+
     cli
     xor ax, ax
     mov ds, ax
