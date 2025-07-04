@@ -1,0 +1,30 @@
+SlimeIX kernel quickstart
+
+1. deps
+   gcc   (32-bit or i686-elf)
+   binutils (objcopy, ld)
+   qemu  (for test)
+   dd    (image build)
+
+2. build
+   $ make          # gets kernel.bin
+
+3. raw kernel
+   $ objcopy -O binary kernel.bin kernel.raw
+
+4. floppy image 1.44M
+   $ dd if=/dev/zero of=slimeix.img bs=512 count=2880
+   $ dd if=boot/boot0.bin of=slimeix.img conv=notrunc
+   $ dd if=kernel.raw  of=slimeix.img bs=512 seek=1 conv=notrunc
+
+   boot0 expects KERNEL_SECTORS=200 (≈100KiB). adjust in boot0.S if kernel grows.
+
+5. run
+   $ qemu-system-i386 -fda slimeix.img -m 32 -serial stdio
+
+expected: CPU halts inside kmain (hlt). add VGA writes in kmain to see text.
+
+notes
+ – boot0 clears nothing; random_fill.S planned.
+ – linker.ld sets RX and RW segments, no RWX.
+ – license 0BSD.
