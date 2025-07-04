@@ -2,6 +2,8 @@
 .global _start
 .org 0
 
+START_ADDR equ 0x7E00
+
 _start:
     cli
     xor %ax,%ax
@@ -11,62 +13,28 @@ _start:
     mov $0x7C00,%sp
     sti
 
-    inb $0x92,%al
-    or $0x02,%al
-    out %al,$0x92
-
+    ; load boot1
     mov $dap,%si
     mov $0x42,%ah
     int $0x13
     jc .fail
 
-    lgdt gdt_ptr
-    mov %cr0,%eax
-    or $1,%eax
-    mov %eax,%cr0
-    jmp $0x08,$pm32
-
-.code32
-pm32:
-    mov $0x10,%ax
-    mov %ax,%ds
-    mov %ax,%es
-    mov %ax,%ss
-    mov $0x200000,%esp
-
-    mov $0x10000,%esi
-    mov $0x100000,%edi
-    mov $(KERNEL_BYTES/4),%ecx
-    cld
-    rep movsd
-
-    jmp $0x08,$0x100000
+    jmp START_ADDR
 
 .fail:
     hlt
     jmp .fail
 
-.align 8
-.gdt:
-    .quad 0x0
-    .quad 0x00CF9A000000FFFF
-    .quad 0x00CF92000000FFFF
-.gdt_end:
-
-gdt_ptr:
-    .word .gdt_end-.gdt-1
-    .long .gdt
-
+; disk address packet for boot1
 .align 16
 dap:
     .byte 0x10,0
-    .word KERNEL_SECTORS
-    .word 0x0000
-    .word 0x1000
+    .word BOOT1_SECTORS
+    .word START_ADDR & 0xF
+    .word START_ADDR >> 4
     .long 1,0
 
-.set KERNEL_SECTORS,200
-.set KERNEL_BYTES,KERNEL_SECTORS*512
+.set BOOT1_SECTORS,16
 
 .org 510
 .word 0xAA55
