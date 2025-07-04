@@ -4,7 +4,7 @@
 .global boot1_entry
 
 .equ KERNEL_LBA, 17
-.equ KERNEL_SECT, 400      # ~200KiB, adjust if kernel grows
+.equ KERNEL_SECT, 400
 
 boot1_entry:
     cli
@@ -12,61 +12,60 @@ boot1_entry:
     mov ds, ax
     mov es, ax
 
-    ; enable A20 fast gate
+    # enable A20
     in al, 0x92
     or al, 2
     out 0x92, al
 
-    ; build disk address packet on stack
-    push word 0x10          ; size
-    push word 0             ; reserved
-    push word KERNEL_SECT
-    push word 0             ; offset
-    push word 0x0000        ; segment 0 (ES loaded later)
-    push dword KERNEL_LBA
-    push dword 0            ; upper 32 bits
+    # prepare DAP pointer DS:SI
+    lea si, [dap]
 
-    ; ES:BX -> DAP (point to top of stack)
-    mov bx, sp
-    mov es, ax
-
-    ; load to 0x100000 -> ES=0x1000, BX=0
+    # set load segment 0x1000 in DAP and in ES
     mov ax, 0x1000
+    mov word ptr [dap+6], ax   # buffer segment
     mov es, ax
-    xor bx, bx
+    xor bx, bx                 # buffer offset 0 in DAP already
 
-    ; BIOS int 13h ext read
-    mov ah, 0x42
+    mov ah, 0x42               # BIOS ext read
     int 0x13
     jc disk_fail
 
-    ; switch to protected mode
+    # switch to protected mode
     cli
     lgdt [gdt_ptr]
     mov eax, cr0
     or eax, 1
     mov cr0, eax
-    jmp 0x08:pm_entry
+    jmp 0x08:pm_start
 
-; 32-bit
 .code32
-pm_entry:
+pm_start:
     mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov ss, ax
     mov esp, 0x200000
-
-    ; jump to kernel
     jmp 0x00100000
 
+.code16
 disk_fail:
     hlt
     jmp disk_fail
 
+# Disk Address Packet (16 bytes)
+.align 4
+dap:
+    .byte 0x10, 0x00
+    .word KERNEL_SECT
+    .word 0x0000        # buffer offset
+    .word 0x0000        # buffer segment (patched)
+    .long KERNEL_LBA
+    .long 0x00000000
+
+# GDT
 .align 8
 gdt:
-    .quad 0x0
+    .quad 0x0000000000000000
     .quad 0x00CF9A000000FFFF
     .quad 0x00CF92000000FFFF
 
