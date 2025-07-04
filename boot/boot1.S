@@ -1,17 +1,20 @@
+.intel_syntax noprefix
 .code16
 .org 0x7E00
+.global boot1_entry
 
-print:
-    mov ah,0x0E
-.msg:
+boot1_entry:
+    mov si, msg
+    mov ah, 0x0E
+.loop:
     lodsb
-    cmp al,0
+    cmp al, 0
     je hang
     int 0x10
-    jmp .msg
+    jmp .loop
 
 hang:
     hlt
     jmp hang
 
-msg db "Boot1 ready",0 
+msg db 'Boot1 ready',0 
