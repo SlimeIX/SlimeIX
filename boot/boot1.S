@@ -54,9 +54,18 @@ boot1_entry:
     mov es, ax
     xor bx, bx                 # buffer offset 0 in DAP already
 
-    mov ah, 0x42               # BIOS ext read
+    mov ah, 0x0E
+    mov al, 'R'
+    int 0x10
+
+    mov ah, 0x42               
     int 0x13
     jc disk_fail
+
+    # debug: print 'O'
+    mov ah, 0x0E
+    mov al, 'O'
+    int 0x10
 
     # switch to protected mode
     cli
