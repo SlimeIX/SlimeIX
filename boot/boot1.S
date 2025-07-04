@@ -17,6 +17,34 @@ boot1_entry:
     or al, 2
     out 0x92, al
 
+    # fallback 8042
+    call empty_8042
+    mov al, 0xD1
+    out 0x64, al
+    call empty_8042
+    mov al, 0xDF
+    out 0x60, al
+    call empty_8042
+
+    # reprogram PIC
+    mov al, 0x11
+    out 0x20, al
+    out 0xA0, al
+    mov al, 0x20
+    out 0x21, al
+    mov al, 0x28
+    out 0xA1, al
+    mov al, 0x04
+    out 0x21, al
+    mov al, 0x02
+    out 0xA1, al
+    mov al, 0x01
+    out 0x21, al
+    out 0xA1, al
+    mov al, 0xFF
+    out 0x21, al
+    out 0xA1, al
+
     # prepare DAP pointer DS:SI
     lea si, [dap]
 
@@ -51,6 +79,13 @@ pm_start:
 disk_fail:
     hlt
     jmp disk_fail
+
+# wait for KBC input buffer empty
+empty_8042:
+    in al, 0x64
+    test al, 2
+    jnz empty_8042
+    ret
 
 # Disk Address Packet (16 bytes)
 .align 4
