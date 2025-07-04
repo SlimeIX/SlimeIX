@@ -11,6 +11,10 @@ OBJ=boot/start.o boot/random.o kernel/main.o kernel/syscall.o kernel/console.o k
 
 all: kernel.bin boot/boot0.bin boot/boot1.bin slimeix.img
 
+# build tool
+tools/build: tools/build.c
+	$(CC) -o $@ $<
+
 %.o: %.S
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -34,14 +38,8 @@ boot/boot1.bin: boot/boot1.S
 kernel.raw: kernel.bin
 	$(OBJCOPY) -O binary $< $@
 
-slimeix.img: boot/boot0.bin boot/boot1.bin kernel.raw
-	dd if=/dev/zero of=$@ bs=1M count=32 >/dev/null 2>&1
-	# write MBR
-	dd if=boot/boot0.bin of=$@ conv=notrunc >/dev/null 2>&1
-	# write boot1 after MBR (LBA 1..16)
-	dd if=boot/boot1.bin of=$@ bs=512 seek=1 conv=notrunc >/dev/null 2>&1
-	# write kernel raw after boot1 (start at LBA 17)
-	dd if=kernel.raw of=$@ bs=512 seek=17 conv=notrunc >/dev/null 2>&1
+slimeix.img: tools/build boot/boot0.bin boot/boot1.bin kernel.raw
+	tools/build boot/boot0.bin boot/boot1.bin kernel.raw > $@
 
 clean:
-	rm -f $(OBJ) kernel.bin 
+	rm -f $(OBJ) kernel.bin boot/*.o boot/*.bin tools/build kernel.raw slimeix.img 
